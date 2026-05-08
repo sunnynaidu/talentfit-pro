@@ -33,8 +33,9 @@ with header_container:
     with col1:
         st.image("TalentFit-Pro-5-8-2026.png")  
     with col2:
-        st.markdown("**AI-Powered Resume & JD Alignment Engine**")
+        st.markdown("<h1 style='font-size: 32px; font-weight: 900; margin-bottom: 0px;'>AI-Powered Resume & JD Alignment Engine</h1>", unsafe_allow_html=True)
         st.markdown("Your competitive edge in professional placement.")
+
 
 # --- 4. Main Layout (Side-by-Side Columns) ---
 # Notice the sidebar is completely gone now!
