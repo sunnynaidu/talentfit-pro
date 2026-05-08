@@ -22,6 +22,10 @@ st.markdown("""
     div.stButton > button {
         border: 1px solid red !important;
     }
+    /* This hides the GitHub Icon and Deploy button at the top right */
+    [data-testid="stToolbar"] {
+        visibility: hidden !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -36,28 +40,21 @@ with header_container:
         st.markdown("<h1 style='font-size: 32px; font-weight: 900; margin-bottom: 0px;'>AI-Powered Resume & JD Alignment Engine</h1>", unsafe_allow_html=True)
         st.markdown("Your competitive edge in professional placement.")
 
-
 # --- 4. Main Layout (Side-by-Side Columns) ---
-# Notice the sidebar is completely gone now!
 col1, col2 = st.columns(2)
 
 with col1:
-    my_resume = st.text_area("📄 Paste Your Resume Here:", height=300)
+    my_resume = st.text_area("**📄 Paste Your Resume Here:**", height=300)
 
 with col2:
-    job_description = st.text_area("🎯 Paste Job Description Here:", height=300)
+    job_description = st.text_area("**🎯 Paste Job Description Here:**", height=300)
 
 # --- 5. Centered Analyze Button ---
-# --- 5. Main Layout ---
-    col1, col2 = st.columns(2)
+st.markdown("---")
+col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
 
-    with col1:
-        # NEW: Added ** around the text to make it bold
-        my_resume = st.text_area("**📄 Paste Your Resume Here:**", height=300)
-
-    with col2:
-        # NEW: Added ** around the text to make it bold
-        job_description = st.text_area("**🎯 Paste Job Description Here:**", height=300)
+with col_btn2:
+    analyze_btn = st.button("🚀 Analyze Alignment", use_container_width=True)
 
 # --- 6. AI Engine Logic ---
 if analyze_btn:
@@ -65,7 +62,7 @@ if analyze_btn:
         
         with st.spinner("TalentFit Pro is calculating your match..."):
             try:
-                # NEW: This securely pulls your API key from the Streamlit vault!
+                # This securely pulls your API key from the Streamlit vault!
                 api_key = st.secrets["GEMINI_API_KEY"]
                 client = genai.Client(api_key=api_key)
                 
