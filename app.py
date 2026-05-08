@@ -6,10 +6,13 @@ import re
 st.set_page_config(page_title="TalentFit Pro", page_icon="🎯", layout="wide")
 
 # --- 2. Custom Styling ---
+# --- 2. Custom Styling ---
 st.markdown("""
 <style>
     .stApp {
         background: linear-gradient(135deg, #e0f2fe 0%, #d1fae5 100%);
+    }
+    div.stTextArea div[data-baseweb="textarea"] {
     }
     div.stTextArea div[data-baseweb="textarea"] {
         border: 3px solid black !important;
@@ -20,7 +23,7 @@ st.markdown("""
         border-radius: 8px !important;
     }
     div.stButton > button {
-        border: 1px solid red !important;
+        border: 2px solid red !important;
     }
     /* This hides the GitHub Icon and Deploy button at the top right */
     [data-testid="stToolbar"] {
