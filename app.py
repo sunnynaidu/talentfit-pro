@@ -10,7 +10,7 @@ st.set_page_config(page_title="TalentFit Pro", page_icon="🎯", layout="wide")
 st.markdown("""
 <style>
     .stApp {
-        background: linear-gradient(135deg, #e0f2fe 20%, #d1fae5 100%);
+         background: linear-gradient(135deg, #e0f2fe 20%, #d1fae5 100%);
     }
     div.stTextArea div[data-baseweb="textarea"] {
     }
