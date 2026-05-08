@@ -8,12 +8,9 @@ st.set_page_config(page_title="TalentFit Pro", page_icon="🎯", layout="wide")
 # --- 2. Custom Styling ---
 st.markdown("""
 <style>
-    /* This creates the pastel gradient background */
     .stApp {
         background: linear-gradient(135deg, #e0f2fe 0%, #d1fae5 100%);
     }
-    
-    /* This adds the thick black border to the text areas */
     div.stTextArea div[data-baseweb="textarea"] {
         border: 3px solid black !important;
         border-radius: 8px !important;
@@ -22,8 +19,6 @@ st.markdown("""
         border: 3px solid black !important;
         border-radius: 8px !important;
     }
-    
-    /* NEW: This adds the thin red border to the Analyze Button */
     div.stButton > button {
         border: 1px solid red !important;
     }
@@ -35,22 +30,14 @@ header_container = st.container()
 
 with header_container:
     col1, col2 = st.columns([2, 3])  
-
     with col1:
         st.image("TalentFit-Pro-5-8-2026.png")  
-
     with col2:
         st.markdown("**AI-Powered Resume & JD Alignment Engine**")
         st.markdown("Your competitive edge in professional placement.")
 
-# --- 4. Sidebar for Security ---
-with st.sidebar:
-    st.header("⚙️ Settings")
-    st.write("To use TalentFit Pro, enter your Gemini API key below.")
-    user_api_key = st.text_input("Gemini API Key:", type="password")
-    st.markdown("[Get a free API key here](https://aistudio.google.com/)")
-
-# --- 5. Main Layout (Side-by-Side Columns) ---
+# --- 4. Main Layout (Side-by-Side Columns) ---
+# Notice the sidebar is completely gone now!
 col1, col2 = st.columns(2)
 
 with col1:
@@ -59,22 +46,22 @@ with col1:
 with col2:
     job_description = st.text_area("🎯 Paste Job Description Here:", height=300)
 
-# --- 6. Centered Analyze Button ---
+# --- 5. Centered Analyze Button ---
 st.markdown("---")
 col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
 
 with col_btn2:
     analyze_btn = st.button("🚀 Analyze Alignment", use_container_width=True)
 
-# --- 7. AI Engine Logic ---
+# --- 6. AI Engine Logic ---
 if analyze_btn:
-    if not user_api_key:
-        st.error("Please enter your API Key in the sidebar first!")
-    elif my_resume and job_description:
+    if my_resume and job_description:
         
         with st.spinner("TalentFit Pro is calculating your match..."):
             try:
-                client = genai.Client(api_key=user_api_key)
+                # NEW: This securely pulls your API key from the Streamlit vault!
+                api_key = st.secrets["GEMINI_API_KEY"]
+                client = genai.Client(api_key=api_key)
                 
                 prompt_instructions = f"""
                 You are an expert Technical Recruiter. Compare the resume to the job description.
@@ -98,7 +85,6 @@ if analyze_btn:
                 )
                 
                 full_text = response.text
-                
                 score_match = re.search(r'<SCORE>(\d+)</SCORE>', full_text)
                 
                 st.success("Analysis Complete!")
@@ -120,7 +106,6 @@ if analyze_btn:
                     res_col1, res_col2, res_col3 = st.columns([2, 1, 1])
                     
                     with res_col2:
-                        # NEW: Added 'border: 1px solid red;' to the style block below
                         st.markdown(f"""
                         <div style="background-color: white; padding: 15px; border-radius: 12px; 
                                     box-shadow: 6px 6px 12px #b8c4d4, -6px -6px 12px #ffffff; 
@@ -132,7 +117,6 @@ if analyze_btn:
                         """, unsafe_allow_html=True)
                         
                     with res_col3:
-                        # NEW: Added 'border: 1px solid red;' to the style block below
                         st.markdown(f"""
                         <div style="background-color: white; padding: 15px; border-radius: 12px; 
                                     box-shadow: 6px 6px 12px #b8c4d4, -6px -6px 12px #ffffff; 
@@ -151,7 +135,7 @@ if analyze_btn:
                     st.write(full_text)
                 
             except Exception as e:
-                st.error(f"An error occurred. Check your API key. Details: {e}")
+                st.error(f"An error occurred. Details: {e}")
                 
     else:
         st.warning("Please paste both your resume and the job description.")
