@@ -48,11 +48,16 @@ with col2:
     job_description = st.text_area("🎯 Paste Job Description Here:", height=300)
 
 # --- 5. Centered Analyze Button ---
-st.markdown("---")
-col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
+# --- 5. Main Layout ---
+    col1, col2 = st.columns(2)
 
-with col_btn2:
-    analyze_btn = st.button("🚀 Analyze Alignment", use_container_width=True)
+    with col1:
+        # NEW: Added ** around the text to make it bold
+        my_resume = st.text_area("**📄 Paste Your Resume Here:**", height=300)
+
+    with col2:
+        # NEW: Added ** around the text to make it bold
+        job_description = st.text_area("**🎯 Paste Job Description Here:**", height=300)
 
 # --- 6. AI Engine Logic ---
 if analyze_btn:
