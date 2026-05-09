@@ -18,23 +18,23 @@ st.markdown("""
     div.stTextArea div[data-baseweb="textarea"] {
         border: 3px solid black !important;
         border-radius: 8px !important;
+        background-color: #ffffff !important; /* Forces solid white background */
     }
     div.stTextArea textarea {
-        border: 3px solid black !important;
-        border-radius: 8px !important;
         height: 300px !important; /* Lock the height */
+        background-color: #ffffff !important;
     }
     
-    /* NEW: Style the File Uploader Box (Left Side) */
+    /* Style the File Uploader Box (Left Side) to be an EXACT twin */
     [data-testid="stFileUploaderDropzone"] {
         border: 3px solid black !important;
         border-radius: 8px !important;
         height: 300px !important; /* Force it to match the text area perfectly */
         display: flex !important;
         flex-direction: column !important;
-        align-items: center !important; /* Centers horizontally */
-        justify-content: center !important; /* Centers vertically */
-        background-color: transparent; /* Blends nicely with your background */
+        align-items: center !important; 
+        justify-content: center !important; 
+        background-color: #ffffff !important; /* Forces solid white background */
     }
     
     /* Keep your custom button and hide the toolbar */
@@ -62,8 +62,8 @@ with header_container:
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("**📄 Upload Your Resume (PDF):**")
-    uploaded_file = st.file_uploader("", type=["pdf"])
+    # FIXED: Moved the title INSIDE the component so it aligns perfectly with the right side!
+    uploaded_file = st.file_uploader("**📄 Upload Your Resume (PDF):**", type=["pdf"])
     
     my_resume = ""
     if uploaded_file is not None:
