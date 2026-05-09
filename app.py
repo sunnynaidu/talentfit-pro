@@ -1,7 +1,7 @@
 import streamlit as st
 from google import genai
 import re
-import PyPDF2  # NEW: The tool that reads your PDF files!
+import PyPDF2  
 
 # --- 1. Page Configuration ---
 st.set_page_config(page_title="TalentFit Pro", page_icon="🎯", layout="wide")
@@ -9,10 +9,12 @@ st.set_page_config(page_title="TalentFit Pro", page_icon="🎯", layout="wide")
 # --- 2. Custom Styling ---
 st.markdown("""
 <style>
-    /* (Leave whichever background you ended up choosing here!) */
+    /* Your Background */
     .stApp {
         background: linear-gradient(135deg, #e0f2fe 0%, #d1fae5 100%);
     }
+    
+    /* Style the Text Area (Right Side) */
     div.stTextArea div[data-baseweb="textarea"] {
         border: 3px solid black !important;
         border-radius: 8px !important;
@@ -20,7 +22,22 @@ st.markdown("""
     div.stTextArea textarea {
         border: 3px solid black !important;
         border-radius: 8px !important;
+        height: 300px !important; /* Lock the height */
     }
+    
+    /* NEW: Style the File Uploader Box (Left Side) */
+    [data-testid="stFileUploaderDropzone"] {
+        border: 3px solid black !important;
+        border-radius: 8px !important;
+        height: 300px !important; /* Force it to match the text area perfectly */
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important; /* Centers horizontally */
+        justify-content: center !important; /* Centers vertically */
+        background-color: transparent; /* Blends nicely with your background */
+    }
+    
+    /* Keep your custom button and hide the toolbar */
     div.stButton > button {
         border: 1px solid red !important;
     }
@@ -45,11 +62,9 @@ with header_container:
 col1, col2 = st.columns(2)
 
 with col1:
-    # NEW: The Drag and Drop Uploader!
     st.markdown("**📄 Upload Your Resume (PDF):**")
     uploaded_file = st.file_uploader("", type=["pdf"])
     
-    # NEW: Logic to extract text from the PDF
     my_resume = ""
     if uploaded_file is not None:
         pdf_reader = PyPDF2.PdfReader(uploaded_file)
