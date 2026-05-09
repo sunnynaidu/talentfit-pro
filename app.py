@@ -3,7 +3,7 @@ from google import genai
 import re
 import PyPDF2  
 import docx  
-import time # NEW: Added to create a smooth loading effect
+import time 
 
 st.set_page_config(page_title="TalentFit Pro", page_icon="🎯", layout="wide")
 
@@ -210,6 +210,27 @@ elif st.session_state.current_page == "search":
     with col_left:
         uploaded_file_search = st.file_uploader("**📄 Upload Resume to Build Search Algorithm:**", type=["pdf", "docx"], key="search_uploader")
         
+        # --- NEW: Advanced Search Filters ---
+        st.markdown("<br>**⚙️ Advanced Search Filters**", unsafe_allow_html=True)
+        
+        # 1. Date Posted Filter (Radio)
+        date_posted = st.radio(
+            "Date Posted:", 
+            ["Past 24 hours", "Past week", "Past month", "Any time"], 
+            index=0, 
+            horizontal=True
+        )
+        
+        # 2. Workplace Type Filter (Checkboxes)
+        st.markdown("<span style='font-size: 14px; color: #31333F;'>Workplace Type:</span>", unsafe_allow_html=True)
+        chk_col1, chk_col2, chk_col3 = st.columns(3)
+        with chk_col1:
+            is_remote = st.checkbox("Remote", value=True)
+        with chk_col2:
+            is_hybrid = st.checkbox("Hybrid", value=True)
+        with chk_col3:
+            is_onsite = st.checkbox("On-site", value=True)
+        
         st.write("") 
         trigger_search = st.button("⚙️ Generate Smart Links", use_container_width=True)
             
@@ -218,31 +239,53 @@ elif st.session_state.current_page == "search":
         
         if trigger_search and uploaded_file_search:
             with st.spinner("Analyzing profile and generating secure search algorithms..."):
-                time.sleep(1.5) # Gives a professional loading effect
+                time.sleep(1.5) 
                 
                 st.success("✅ Analysis Complete! Custom search pathways generated.")
-                st.info("💡 **How it works:** These secure links bypass basic search limits. They will open directly in your LinkedIn account, automatically applying advanced filters to show only the highest-probability roles posted in the last 24 hours.")
+                st.info("💡 **How it works:** These secure links bypass basic search limits. They will open directly in your LinkedIn account, automatically applying your exact date and workplace filters.")
                 
-                # Mock Data (Ready to be wired to Gemini later!)
+                # --- LinkedIn URL Logic Translation ---
+                # 1. Translate Time Filters
+                time_codes = {
+                    "Past 24 hours": "r86400", 
+                    "Past week": "r604800", 
+                    "Past month": "r2592000", 
+                    "Any time": ""
+                }
+                tpr_param = f"&f_TPR={time_codes[date_posted]}" if time_codes[date_posted] else ""
+                
+                # 2. Translate Workplace Filters
+                wt_codes = []
+                if is_onsite: wt_codes.append("1")
+                if is_remote: wt_codes.append("2")
+                if is_hybrid: wt_codes.append("3")
+                
+                # %2C is the URL code for a comma, which LinkedIn requires for multiple selections
+                wt_param = f"&f_WT={'%2C'.join(wt_codes)}" if wt_codes else ""
+                
+                # --- Link Generation ---
                 job_title_1 = "Senior Program Manager"
                 job_title_2 = "Lead Data Analyst"
                 job_title_3 = "IT Project Director"
                 location = "United States"
                 
-                search_link_1 = f"https://www.linkedin.com/jobs/search/?keywords={job_title_1.replace(' ', '%20')}&location={location.replace(' ', '%20')}&f_TPR=r86400"
-                search_link_2 = f"https://www.linkedin.com/jobs/search/?keywords={job_title_2.replace(' ', '%20')}&location={location.replace(' ', '%20')}&f_TPR=r86400"
-                search_link_3 = f"https://www.linkedin.com/jobs/search/?keywords={job_title_3.replace(' ', '%20')}&location={location.replace(' ', '%20')}&f_TPR=r86400"
+                # Stitching it all together!
+                search_link_1 = f"https://www.linkedin.com/jobs/search/?keywords={job_title_1.replace(' ', '%20')}&location={location.replace(' ', '%20')}{tpr_param}{wt_param}"
+                search_link_2 = f"https://www.linkedin.com/jobs/search/?keywords={job_title_2.replace(' ', '%20')}&location={location.replace(' ', '%20')}{tpr_param}{wt_param}"
+                search_link_3 = f"https://www.linkedin.com/jobs/search/?keywords={job_title_3.replace(' ', '%20')}&location={location.replace(' ', '%20')}{tpr_param}{wt_param}"
                 
                 st.markdown("#### Click to execute live search:")
-                st.link_button(f"💼 Execute Search: '{job_title_1}' (Past 24 Hours)", search_link_1, use_container_width=True)
-                st.link_button(f"📊 Execute Search: '{job_title_2}' (Past 24 Hours)", search_link_2, use_container_width=True)
-                st.link_button(f"🚀 Execute Search: '{job_title_3}' (Past 24 Hours)", search_link_3, use_container_width=True)
+                st.caption("⚠️ *Note: If LinkedIn asks you to log in, just return here and click the button a second time after logging in!*")
+                
+                st.link_button(f"💼 Execute Search: '{job_title_1}'", search_link_1, use_container_width=True)
+                st.link_button(f"📊 Execute Search: '{job_title_2}'", search_link_2, use_container_width=True)
+                st.link_button(f"🚀 Execute Search: '{job_title_3}'", search_link_3, use_container_width=True)
                 
         elif trigger_search:
             st.warning("Please upload a resume first so we can analyze your profile.")
         else:
             st.markdown("""
             <div style='background-color: white; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e1;'>
-                <p style='margin:0; color: #475569;'>👈 Upload your resume and click <b>Generate Smart Links</b> to begin. TalentFit Pro will analyze your background and build secure, one-click search pathways directly to live LinkedIn data.</p>
+                <p style='margin:0; color: #475569;'>👈 Adjust your filters, upload your resume, and click <b>Generate Smart Links</b>. TalentFit Pro will build secure, one-click search pathways tailored directly to your preferences.</p>
             </div>
             """, unsafe_allow_html=True)
