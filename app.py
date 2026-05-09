@@ -2,6 +2,7 @@ import streamlit as st
 from google import genai
 import re
 import PyPDF2  
+import docx  # NEW: The tool that reads Microsoft Word files!
 
 # --- 1. Page Configuration ---
 st.set_page_config(page_title="TalentFit Pro", page_icon="🎯", layout="wide")
@@ -18,10 +19,10 @@ st.markdown("""
     div.stTextArea div[data-baseweb="textarea"] {
         border: 3px solid black !important;
         border-radius: 8px !important;
-        background-color: #ffffff !important; /* Forces solid white background */
+        background-color: #ffffff !important;
     }
     div.stTextArea textarea {
-        height: 300px !important; /* Lock the height */
+        height: 300px !important;
         background-color: #ffffff !important;
     }
     
@@ -29,12 +30,12 @@ st.markdown("""
     [data-testid="stFileUploaderDropzone"] {
         border: 3px solid black !important;
         border-radius: 8px !important;
-        height: 300px !important; /* Force it to match the text area perfectly */
+        height: 300px !important; 
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important; 
         justify-content: center !important; 
-        background-color: #ffffff !important; /* Forces solid white background */
+        background-color: #ffffff !important; 
     }
     
     /* Keep your custom button and hide the toolbar */
@@ -62,15 +63,27 @@ with header_container:
 col1, col2 = st.columns(2)
 
 with col1:
-    # FIXED: Moved the title INSIDE the component so it aligns perfectly with the right side!
-    uploaded_file = st.file_uploader("**📄 Upload Your Resume (PDF):**", type=["pdf"])
+    # UPDATED: Changed the label and added "docx" to the allowed file types
+    uploaded_file = st.file_uploader("**📄 Upload Your Resume (PDF or Word):**", type=["pdf", "docx"])
     
     my_resume = ""
     if uploaded_file is not None:
-        pdf_reader = PyPDF2.PdfReader(uploaded_file)
-        for page in pdf_reader.pages:
-            my_resume += page.extract_text()
-        st.success("Resume loaded successfully!")
+        # Check what kind of file was uploaded
+        file_extension = uploaded_file.name.split(".")[-1].lower()
+        
+        # If it's a PDF...
+        if file_extension == "pdf":
+            pdf_reader = PyPDF2.PdfReader(uploaded_file)
+            for page in pdf_reader.pages:
+                my_resume += page.extract_text()
+            st.success("PDF Resume loaded successfully!")
+            
+        # If it's a Word document...
+        elif file_extension == "docx":
+            doc = docx.Document(uploaded_file)
+            for para in doc.paragraphs:
+                my_resume += para.text + "\n"
+            st.success("Word Resume loaded successfully!")
 
 with col2:
     job_description = st.text_area("**🎯 Paste Job Description Here:**", height=300)
