@@ -127,7 +127,7 @@ if st.session_state.current_page == "alignment":
     col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
 
     with col_btn2:
-        analyze_btn = st.button("🚀 ANALYZE ALIGNMENT ❯", use_container_width=True)
+        analyze_btn = st.button("🚀 ANALYZE ALIGNMENT", use_container_width=True)
 
     if analyze_btn:
         if my_resume and job_description:
