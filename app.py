@@ -30,6 +30,7 @@ st.markdown("""
         height: 300px !important;
         background-color: #ffffff !important;
         color: black !important;
+        font-weight: bold !important; /* NEW: Forces typed text to be bold */
     }
     
     [data-testid="stFileUploaderDropzone"] {
@@ -42,6 +43,12 @@ st.markdown("""
         justify-content: center !important; 
         background-color: #ffffff !important; 
         color: black !important;
+    }
+    
+    /* NEW: Forces the "Drag and drop file here" text inside the uploader to be bold */
+    [data-testid="stFileUploaderDropzone"] div, [data-testid="stFileUploaderDropzone"] small {
+        color: black !important;
+        font-weight: bold !important;
     }
     
     /* 3D Pill Buttons - Auto-sizing to text */
@@ -59,7 +66,7 @@ st.markdown("""
                     inset 0px -4px 6px rgba(0, 0, 0, 0.2) !important;
         transition: all 0.15s ease-in-out !important;
         text-decoration: none !important;
-        width: auto !important; /* Ensures it wraps strictly to text */
+        width: auto !important; 
         display: inline-block !important;
     }
     
@@ -141,7 +148,6 @@ if st.session_state.current_page == "alignment":
 
     st.markdown("---")
     
-    # Wrap in columns to perfectly center the auto-sized button
     col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
     with col_btn2:
         analyze_btn = st.button(" 🚀 ANALYZE ALIGNMENT ❯ ")
@@ -199,7 +205,7 @@ if st.session_state.current_page == "alignment":
                                         box-shadow: 6px 6px 12px #010014, -6px -6px 12px #030034; 
                                         border: 2px solid {color};
                                         text-align: center; margin-bottom: 20px;">
-                                <span style="font-size: 14px; color: #64748b;">Match %</span><br>
+                                <span style="font-size: 14px; color: black; font-weight: bold;">Match %</span><br>
                                 <span style="font-size: 24px; font-weight: bold; color: {color};">{score}%</span>
                             </div>
                             """, unsafe_allow_html=True)
@@ -210,15 +216,15 @@ if st.session_state.current_page == "alignment":
                                         box-shadow: 6px 6px 12px #010014, -6px -6px 12px #030034; 
                                         border: 2px solid {color};
                                         text-align: center; margin-bottom: 20px;">
-                                <span style="font-size: 14px; color: #64748b;">Rating</span><br>
+                                <span style="font-size: 14px; color: black; font-weight: bold;">Rating</span><br>
                                 <span style="font-size: 18px; font-weight: bold; color: {color};">{status}</span>
                             </div>
                             """, unsafe_allow_html=True)
                             
-                        st.markdown(f"<div style='background-color: white; padding: 20px; border-radius: 8px; color: black;'>{clean_text}</div>", unsafe_allow_html=True)
+                        st.markdown(f"<div style='background-color: white; padding: 20px; border-radius: 8px; color: black; font-weight: bold;'>{clean_text}</div>", unsafe_allow_html=True)
                         
                     else:
-                        st.markdown(f"<div style='background-color: white; padding: 20px; border-radius: 8px; color: black;'>{full_text}</div>", unsafe_allow_html=True)
+                        st.markdown(f"<div style='background-color: white; padding: 20px; border-radius: 8px; color: black; font-weight: bold;'>{full_text}</div>", unsafe_allow_html=True)
                     
                 except Exception as e:
                     st.error(f"An error occurred. Details: {e}")
@@ -305,8 +311,9 @@ elif st.session_state.current_page == "search":
         elif trigger_search:
             st.warning("Please upload a resume first so we can analyze your profile.")
         else:
+            # NEW: Made this instructional text black and bold!
             st.markdown("""
             <div style='background-color: white; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e1;'>
-                <p style='margin:0; color: #475569;'>👈 Adjust your filters, upload your resume, and click <b>FIND MY PERFECT MATCHES</b>. TalentFit Pro will build secure, one-click search pathways tailored directly to your preferences.</p>
+                <p style='margin:0; color: black; font-weight: bold;'>👈 Adjust your filters, upload your resume, and click <span style='color: #03a9f4;'>FIND MY PERFECT MATCHES</span>. TalentFit Pro will build secure, one-click search pathways tailored directly to your preferences.</p>
             </div>
             """, unsafe_allow_html=True)
