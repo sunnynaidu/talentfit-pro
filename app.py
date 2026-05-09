@@ -1,18 +1,17 @@
 import streamlit as st
 from google import genai
 import re
+import PyPDF2  # NEW: The tool that reads your PDF files!
 
 # --- 1. Page Configuration ---
 st.set_page_config(page_title="TalentFit Pro", page_icon="🎯", layout="wide")
 
 # --- 2. Custom Styling ---
-# --- 2. Custom Styling ---
 st.markdown("""
 <style>
+    /* (Leave whichever background you ended up choosing here!) */
     .stApp {
-         background: linear-gradient(135deg, #e0f2fe 20%, #d1fae5 100%);
-    }
-    div.stTextArea div[data-baseweb="textarea"] {
+        background: linear-gradient(135deg, #e0f2fe 0%, #d1fae5 100%);
     }
     div.stTextArea div[data-baseweb="textarea"] {
         border: 3px solid black !important;
@@ -23,9 +22,8 @@ st.markdown("""
         border-radius: 8px !important;
     }
     div.stButton > button {
-        border: 2px solid red !important;
+        border: 1px solid red !important;
     }
-    /* This hides the GitHub Icon and Deploy button at the top right */
     [data-testid="stToolbar"] {
         visibility: hidden !important;
     }
@@ -47,7 +45,17 @@ with header_container:
 col1, col2 = st.columns(2)
 
 with col1:
-    my_resume = st.text_area("**📄 Paste Your Resume Here:**", height=300)
+    # NEW: The Drag and Drop Uploader!
+    st.markdown("**📄 Upload Your Resume (PDF):**")
+    uploaded_file = st.file_uploader("", type=["pdf"])
+    
+    # NEW: Logic to extract text from the PDF
+    my_resume = ""
+    if uploaded_file is not None:
+        pdf_reader = PyPDF2.PdfReader(uploaded_file)
+        for page in pdf_reader.pages:
+            my_resume += page.extract_text()
+        st.success("Resume loaded successfully!")
 
 with col2:
     job_description = st.text_area("**🎯 Paste Job Description Here:**", height=300)
@@ -65,7 +73,7 @@ if analyze_btn:
         
         with st.spinner("TalentFit Pro is calculating your match..."):
             try:
-                # This securely pulls your API key from the Streamlit vault!
+                # Pulls your API key from the Streamlit vault
                 api_key = st.secrets["GEMINI_API_KEY"]
                 client = genai.Client(api_key=api_key)
                 
@@ -92,8 +100,6 @@ if analyze_btn:
                 
                 full_text = response.text
                 score_match = re.search(r'<SCORE>(\d+)</SCORE>', full_text)
-                
-                st.success("Analysis Complete!")
                 
                 if score_match:
                     score = int(score_match.group(1))
@@ -144,4 +150,4 @@ if analyze_btn:
                 st.error(f"An error occurred. Details: {e}")
                 
     else:
-        st.warning("Please paste both your resume and the job description.")
+        st.warning("Please upload your resume and paste the job description.")
