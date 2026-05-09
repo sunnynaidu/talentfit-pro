@@ -30,7 +30,7 @@ st.markdown("""
         height: 300px !important;
         background-color: #ffffff !important;
         color: black !important;
-        font-weight: bold !important; /* NEW: Forces typed text to be bold */
+        font-weight: bold !important; 
     }
     
     [data-testid="stFileUploaderDropzone"] {
@@ -45,7 +45,7 @@ st.markdown("""
         color: black !important;
     }
     
-    /* NEW: Forces the "Drag and drop file here" text inside the uploader to be bold */
+    /* Forces the "Drag and drop file here" text inside the uploader to be bold */
     [data-testid="stFileUploaderDropzone"] div, [data-testid="stFileUploaderDropzone"] small {
         color: black !important;
         font-weight: bold !important;
@@ -80,8 +80,8 @@ st.markdown("""
         visibility: hidden !important;
     }
     
-    /* Fix for radio buttons and checkboxes to be readable on dark background */
-    .stRadio label, .stCheckbox label {
+    /* NEW: Expanded to target ALL text inside radio buttons and checkboxes */
+    .stRadio label, .stCheckbox label, .stRadio p, .stCheckbox p {
         color: white !important;
         font-weight: bold !important;
     }
@@ -252,7 +252,7 @@ elif st.session_state.current_page == "search":
             horizontal=True
         )
         
-        st.markdown("<span style='font-size: 14px; color: #e0f2fe;'>Workplace Type:</span>", unsafe_allow_html=True)
+        st.markdown("<span style='font-size: 14px; color: #e0f2fe; font-weight: bold;'>Workplace Type:</span>", unsafe_allow_html=True)
         chk_col1, chk_col2, chk_col3 = st.columns(3)
         with chk_col1:
             is_remote = st.checkbox("Remote", value=True)
@@ -311,7 +311,6 @@ elif st.session_state.current_page == "search":
         elif trigger_search:
             st.warning("Please upload a resume first so we can analyze your profile.")
         else:
-            # NEW: Made this instructional text black and bold!
             st.markdown("""
             <div style='background-color: white; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e1;'>
                 <p style='margin:0; color: black; font-weight: bold;'>👈 Adjust your filters, upload your resume, and click <span style='color: #03a9f4;'>FIND MY PERFECT MATCHES</span>. TalentFit Pro will build secure, one-click search pathways tailored directly to your preferences.</p>
