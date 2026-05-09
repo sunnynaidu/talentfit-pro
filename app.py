@@ -232,7 +232,7 @@ elif st.session_state.current_page == "search":
             is_onsite = st.checkbox("On-site", value=True)
         
         st.write("") 
-        trigger_search = st.button("⚙️ Generate Smart Links", use_container_width=True)
+        trigger_search = st.button("⚙️ Find My Perfect Matches", use_container_width=True)
             
     with col_right:
         st.markdown("### 🎯 Your AI-Optimized Target Roles")
