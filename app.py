@@ -37,20 +37,29 @@ st.markdown("""
         background-color: #ffffff !important; 
     }
     
-    /* Thick red border and embossed 3D effect for all buttons */
+    /* NEW: 3D Pill Buttons matching the uploaded image */
     div.stButton > button, a[data-testid="baseLinkButton"] > div {
-        border: 3px solid red !important;
-        border-radius: 8px !important;
-        box-shadow: inset 2px 2px 5px rgba(255,255,255,0.9), inset -3px -3px 7px rgba(0,0,0,0.15), 4px 4px 6px rgba(0,0,0,0.2) !important;
-        font-weight: bold !important;
-        background-color: #f8f9fa !important;
-        color: black !important;
-        transition: all 0.1s ease-in-out;
+        border: none !important;
+        border-radius: 50px !important; /* Creates the perfect pill shape */
+        background: linear-gradient(to bottom, #00d2ff, #03a9f4) !important; /* Bright teal/blue gradient */
+        color: white !important;
+        font-weight: 900 !important; /* Extra bold text */
+        font-size: 16px !important;
+        text-transform: uppercase !important; /* Forces uppercase like the image */
+        padding: 12px 24px !important;
+        /* The magic shadows that create the 3D plastic/embossed effect */
+        box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2), 
+                    inset 0px 4px 6px rgba(255, 255, 255, 0.4), 
+                    inset 0px -4px 6px rgba(0, 0, 0, 0.2) !important;
+        transition: all 0.15s ease-in-out !important;
         text-decoration: none !important;
     }
     
+    /* Button press animation */
     div.stButton > button:active, a[data-testid="baseLinkButton"] > div:active {
-        box-shadow: inset 4px 4px 8px rgba(0,0,0,0.2), inset -4px -4px 8px rgba(255,255,255,0.8) !important;
+        transform: translateY(4px) !important;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2), 
+                    inset 0px 4px 6px rgba(0, 0, 0, 0.3) !important;
     }
     
     [data-testid="stToolbar"] {
@@ -63,11 +72,11 @@ st.markdown("""
 nav_col1, nav_col2 = st.columns([1, 5])
 with nav_col1:
     if st.session_state.current_page == "alignment":
-        if st.button("🔍 Smart Job Search"):
+        if st.button("🔍 SMART JOB SEARCH ❯"):
             st.session_state.current_page = "search"
             st.rerun()
     else:
-        if st.button("⬅ Alignment Engine"):
+        if st.button("⬅ ALIGNMENT ENGINE ❯"):
             st.session_state.current_page = "alignment"
             st.rerun()
 
@@ -118,7 +127,7 @@ if st.session_state.current_page == "alignment":
     col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
 
     with col_btn2:
-        analyze_btn = st.button("🚀 Analyze Alignment", use_container_width=True)
+        analyze_btn = st.button("🚀 ANALYZE ALIGNMENT ❯", use_container_width=True)
 
     if analyze_btn:
         if my_resume and job_description:
@@ -137,7 +146,7 @@ if st.session_state.current_page == "alignment":
                     Then provide:
                     1. Missing Keywords: Identify exact keywords, tools, or skills missing.
                     2. Resume Upgrades: Suggest 2 new bullet points for the resume.
-                    Keep it professional, simple, and natural.
+                    Keep it professional, simple, and natural. Do not use side headings.
                     
                     My Resume: {my_resume}
                     Job Description: {job_description}
@@ -210,10 +219,8 @@ elif st.session_state.current_page == "search":
     with col_left:
         uploaded_file_search = st.file_uploader("**📄 Upload Resume to Build Search Algorithm:**", type=["pdf", "docx"], key="search_uploader")
         
-        # --- NEW: Advanced Search Filters ---
         st.markdown("<br>**⚙️ Advanced Search Filters**", unsafe_allow_html=True)
         
-        # 1. Date Posted Filter (Radio)
         date_posted = st.radio(
             "Date Posted:", 
             ["Past 24 hours", "Past week", "Past month", "Any time"], 
@@ -221,7 +228,6 @@ elif st.session_state.current_page == "search":
             horizontal=True
         )
         
-        # 2. Workplace Type Filter (Checkboxes)
         st.markdown("<span style='font-size: 14px; color: #31333F;'>Workplace Type:</span>", unsafe_allow_html=True)
         chk_col1, chk_col2, chk_col3 = st.columns(3)
         with chk_col1:
@@ -232,7 +238,8 @@ elif st.session_state.current_page == "search":
             is_onsite = st.checkbox("On-site", value=True)
         
         st.write("") 
-        trigger_search = st.button("⚙️ Find My Perfect Matches", use_container_width=True)
+        # NEW: Custom bold text with the new 3D pill styling
+        trigger_search = st.button("FIND MY PERFECT MATCHES ❯", use_container_width=True)
             
     with col_right:
         st.markdown("### 🎯 Your AI-Optimized Target Roles")
@@ -244,8 +251,6 @@ elif st.session_state.current_page == "search":
                 st.success("✅ Analysis Complete! Custom search pathways generated.")
                 st.info("💡 **How it works:** These secure links bypass basic search limits. They will open directly in your LinkedIn account, automatically applying your exact date and workplace filters.")
                 
-                # --- LinkedIn URL Logic Translation ---
-                # 1. Translate Time Filters
                 time_codes = {
                     "Past 24 hours": "r86400", 
                     "Past week": "r604800", 
@@ -254,22 +259,18 @@ elif st.session_state.current_page == "search":
                 }
                 tpr_param = f"&f_TPR={time_codes[date_posted]}" if time_codes[date_posted] else ""
                 
-                # 2. Translate Workplace Filters
                 wt_codes = []
                 if is_onsite: wt_codes.append("1")
                 if is_remote: wt_codes.append("2")
                 if is_hybrid: wt_codes.append("3")
                 
-                # %2C is the URL code for a comma, which LinkedIn requires for multiple selections
                 wt_param = f"&f_WT={'%2C'.join(wt_codes)}" if wt_codes else ""
                 
-                # --- Link Generation ---
                 job_title_1 = "Senior Program Manager"
                 job_title_2 = "Lead Data Analyst"
                 job_title_3 = "IT Project Director"
                 location = "United States"
                 
-                # Stitching it all together!
                 search_link_1 = f"https://www.linkedin.com/jobs/search/?keywords={job_title_1.replace(' ', '%20')}&location={location.replace(' ', '%20')}{tpr_param}{wt_param}"
                 search_link_2 = f"https://www.linkedin.com/jobs/search/?keywords={job_title_2.replace(' ', '%20')}&location={location.replace(' ', '%20')}{tpr_param}{wt_param}"
                 search_link_3 = f"https://www.linkedin.com/jobs/search/?keywords={job_title_3.replace(' ', '%20')}&location={location.replace(' ', '%20')}{tpr_param}{wt_param}"
@@ -277,15 +278,15 @@ elif st.session_state.current_page == "search":
                 st.markdown("#### Click to execute live search:")
                 st.caption("⚠️ *Note: If LinkedIn asks you to log in, just return here and click the button a second time after logging in!*")
                 
-                st.link_button(f"💼 Execute Search: '{job_title_1}'", search_link_1, use_container_width=True)
-                st.link_button(f"📊 Execute Search: '{job_title_2}'", search_link_2, use_container_width=True)
-                st.link_button(f"🚀 Execute Search: '{job_title_3}'", search_link_3, use_container_width=True)
+                st.link_button(f"💼 EXECUTE SEARCH: '{job_title_1}' ❯", search_link_1, use_container_width=True)
+                st.link_button(f"📊 EXECUTE SEARCH: '{job_title_2}' ❯", search_link_2, use_container_width=True)
+                st.link_button(f"🚀 EXECUTE SEARCH: '{job_title_3}' ❯", search_link_3, use_container_width=True)
                 
         elif trigger_search:
             st.warning("Please upload a resume first so we can analyze your profile.")
         else:
             st.markdown("""
             <div style='background-color: white; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e1;'>
-                <p style='margin:0; color: #475569;'>👈 Adjust your filters, upload your resume, and click <b>Generate Smart Links</b>. TalentFit Pro will build secure, one-click search pathways tailored directly to your preferences.</p>
+                <p style='margin:0; color: #475569;'>👈 Adjust your filters, upload your resume, and click <b>FIND MY PERFECT MATCHES</b>. TalentFit Pro will build secure, one-click search pathways tailored directly to your preferences.</p>
             </div>
             """, unsafe_allow_html=True)
