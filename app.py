@@ -5,17 +5,22 @@ import PyPDF2
 import docx  
 import time 
 
+# --- 1. Page Configuration ---
 st.set_page_config(page_title="TalentFit Pro", page_icon="🎯", layout="wide")
 
 if "current_page" not in st.session_state:
     st.session_state.current_page = "alignment"
 
+# --- 2. Custom Styling ---
 st.markdown("""
 <style>
+    /* Your Custom Deep Blue Radial Gradient Background */
     .stApp {
-        background: linear-gradient(135deg, #e0f2fe 0%, #d1fae5 100%);
+        background: #020024 !important;
+        background: radial-gradient(circle, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 21%, rgba(0, 212, 255, 1) 100%) !important;
     }
     
+    /* White Backgrounds for Inputs to keep text readable */
     div.stTextArea div[data-baseweb="textarea"] {
         border: 3px solid black !important;
         border-radius: 8px !important;
@@ -24,6 +29,7 @@ st.markdown("""
     div.stTextArea textarea {
         height: 300px !important;
         background-color: #ffffff !important;
+        color: black !important;
     }
     
     [data-testid="stFileUploaderDropzone"] {
@@ -35,55 +41,62 @@ st.markdown("""
         align-items: center !important; 
         justify-content: center !important; 
         background-color: #ffffff !important; 
+        color: black !important;
     }
     
-    /* NEW: 3D Pill Buttons matching the uploaded image */
+    /* 3D Pill Buttons - Auto-sizing to text */
     div.stButton > button, a[data-testid="baseLinkButton"] > div {
         border: none !important;
-        border-radius: 50px !important; /* Creates the perfect pill shape */
-        background: linear-gradient(to bottom, #00d2ff, #03a9f4) !important; /* Bright teal/blue gradient */
+        border-radius: 50px !important; 
+        background: linear-gradient(to bottom, #00d2ff, #03a9f4) !important; 
         color: white !important;
-        font-weight: 900 !important; /* Extra bold text */
+        font-weight: 900 !important; 
         font-size: 16px !important;
-        text-transform: uppercase !important; /* Forces uppercase like the image */
+        text-transform: uppercase !important; 
         padding: 12px 24px !important;
-        /* The magic shadows that create the 3D plastic/embossed effect */
-        box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2), 
+        box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.4), 
                     inset 0px 4px 6px rgba(255, 255, 255, 0.4), 
                     inset 0px -4px 6px rgba(0, 0, 0, 0.2) !important;
         transition: all 0.15s ease-in-out !important;
         text-decoration: none !important;
+        width: auto !important; /* Ensures it wraps strictly to text */
+        display: inline-block !important;
     }
     
-    /* Button press animation */
     div.stButton > button:active, a[data-testid="baseLinkButton"] > div:active {
         transform: translateY(4px) !important;
-        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2), 
-                    inset 0px 4px 6px rgba(0, 0, 0, 0.3) !important;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.4), 
+                    inset 0px 4px 6px rgba(0, 0, 0, 0.5) !important;
     }
     
     [data-testid="stToolbar"] {
         visibility: hidden !important;
     }
+    
+    /* Fix for radio buttons and checkboxes to be readable on dark background */
+    .stRadio label, .stCheckbox label {
+        color: white !important;
+        font-weight: bold !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# --- Navigation Bar ---
+# --- 3. Navigation Bar ---
 nav_col1, nav_col2 = st.columns([1, 5])
 with nav_col1:
     if st.session_state.current_page == "alignment":
-        if st.button("🔍 SMART JOB SEARCH ❯"):
+        if st.button(" 🔍 SMART JOB SEARCH ❯ "):
             st.session_state.current_page = "search"
             st.rerun()
     else:
-        if st.button("⬅ ALIGNMENT ENGINE ❯"):
+        if st.button(" ⬅ ALIGNMENT ENGINE ❯ "):
             st.session_state.current_page = "alignment"
             st.rerun()
 
 with nav_col2:
     st.empty() 
 
-# --- Header ---
+# --- 4. Header ---
 header_container = st.container()
 with header_container:
     col1, col2 = st.columns([2, 3])  
@@ -91,20 +104,22 @@ with header_container:
         st.image("TalentFit-Pro-5-8-2026.png")  
     with col2:
         if st.session_state.current_page == "alignment":
-            st.markdown("<h1 style='font-size: 32px; font-weight: 900; margin-bottom: 0px;'>AI-Powered Resume & JD Alignment Engine</h1>", unsafe_allow_html=True)
-            st.markdown("Your competitive edge in professional placement.")
+            st.markdown("<h1 style='font-size: 32px; font-weight: 900; margin-bottom: 0px; color: white;'>AI-Powered Resume & JD Alignment Engine</h1>", unsafe_allow_html=True)
+            st.markdown("<span style='color: #e0f2fe; font-size: 18px;'>Your competitive edge in professional placement.</span>", unsafe_allow_html=True)
         else:
-            st.markdown("<h1 style='font-size: 32px; font-weight: 900; margin-bottom: 0px;'>Smart Job Search Portal</h1>", unsafe_allow_html=True)
-            st.markdown("Secure, AI-optimized connections to live market data.")
+            st.markdown("<h1 style='font-size: 32px; font-weight: 900; margin-bottom: 0px; color: white;'>Smart Job Search Portal</h1>", unsafe_allow_html=True)
+            st.markdown("<span style='color: #e0f2fe; font-size: 18px;'>Secure, AI-optimized connections to live market data.</span>", unsafe_allow_html=True)
 
 # ==========================================
 # PAGE 1: ALIGNMENT ENGINE
 # ==========================================
 if st.session_state.current_page == "alignment":
+    st.write("") # Spacer
     col1, col2 = st.columns(2)
 
     with col1:
-        uploaded_file = st.file_uploader("**📄 Upload Your Resume (PDF or Word):**", type=["pdf", "docx"])
+        st.markdown("<span style='color: white; font-weight: bold;'>📄 Upload Your Resume (PDF or Word):</span>", unsafe_allow_html=True)
+        uploaded_file = st.file_uploader("", type=["pdf", "docx"], label_visibility="collapsed")
         
         my_resume = ""
         if uploaded_file is not None:
@@ -121,13 +136,15 @@ if st.session_state.current_page == "alignment":
                 st.success("Word Resume loaded successfully!")
 
     with col2:
-        job_description = st.text_area("**🎯 Paste Job Description Here:**", height=300)
+        st.markdown("<span style='color: white; font-weight: bold;'>🎯 Paste Job Description Here:</span>", unsafe_allow_html=True)
+        job_description = st.text_area("", height=300, label_visibility="collapsed")
 
     st.markdown("---")
+    
+    # Wrap in columns to perfectly center the auto-sized button
     col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
-
     with col_btn2:
-        analyze_btn = st.button("🚀 ANALYZE ALIGNMENT", use_container_width=True)
+        analyze_btn = st.button(" 🚀 ANALYZE ALIGNMENT ❯ ")
 
     if analyze_btn:
         if my_resume and job_description:
@@ -179,8 +196,8 @@ if st.session_state.current_page == "alignment":
                         with res_col2:
                             st.markdown(f"""
                             <div style="background-color: white; padding: 15px; border-radius: 12px; 
-                                        box-shadow: 6px 6px 12px #b8c4d4, -6px -6px 12px #ffffff; 
-                                        border: 1px solid red;
+                                        box-shadow: 6px 6px 12px #010014, -6px -6px 12px #030034; 
+                                        border: 2px solid {color};
                                         text-align: center; margin-bottom: 20px;">
                                 <span style="font-size: 14px; color: #64748b;">Match %</span><br>
                                 <span style="font-size: 24px; font-weight: bold; color: {color};">{score}%</span>
@@ -190,18 +207,18 @@ if st.session_state.current_page == "alignment":
                         with res_col3:
                             st.markdown(f"""
                             <div style="background-color: white; padding: 15px; border-radius: 12px; 
-                                        box-shadow: 6px 6px 12px #b8c4d4, -6px -6px 12px #ffffff; 
-                                        border: 1px solid red;
+                                        box-shadow: 6px 6px 12px #010014, -6px -6px 12px #030034; 
+                                        border: 2px solid {color};
                                         text-align: center; margin-bottom: 20px;">
                                 <span style="font-size: 14px; color: #64748b;">Rating</span><br>
                                 <span style="font-size: 18px; font-weight: bold; color: {color};">{status}</span>
                             </div>
                             """, unsafe_allow_html=True)
                             
-                        st.write(clean_text)
+                        st.markdown(f"<div style='background-color: white; padding: 20px; border-radius: 8px; color: black;'>{clean_text}</div>", unsafe_allow_html=True)
                         
                     else:
-                        st.write(full_text)
+                        st.markdown(f"<div style='background-color: white; padding: 20px; border-radius: 8px; color: black;'>{full_text}</div>", unsafe_allow_html=True)
                     
                 except Exception as e:
                     st.error(f"An error occurred. Details: {e}")
@@ -217,9 +234,10 @@ elif st.session_state.current_page == "search":
     col_left, col_right = st.columns([4, 6])
     
     with col_left:
-        uploaded_file_search = st.file_uploader("**📄 Upload Resume to Build Search Algorithm:**", type=["pdf", "docx"], key="search_uploader")
+        st.markdown("<span style='color: white; font-weight: bold;'>📄 Upload Resume to Build Search Algorithm:</span>", unsafe_allow_html=True)
+        uploaded_file_search = st.file_uploader("", type=["pdf", "docx"], key="search_uploader", label_visibility="collapsed")
         
-        st.markdown("<br>**⚙️ Advanced Search Filters**", unsafe_allow_html=True)
+        st.markdown("<br><span style='color: white; font-size: 18px; font-weight: bold;'>⚙️ Advanced Search Filters</span>", unsafe_allow_html=True)
         
         date_posted = st.radio(
             "Date Posted:", 
@@ -228,7 +246,7 @@ elif st.session_state.current_page == "search":
             horizontal=True
         )
         
-        st.markdown("<span style='font-size: 14px; color: #31333F;'>Workplace Type:</span>", unsafe_allow_html=True)
+        st.markdown("<span style='font-size: 14px; color: #e0f2fe;'>Workplace Type:</span>", unsafe_allow_html=True)
         chk_col1, chk_col2, chk_col3 = st.columns(3)
         with chk_col1:
             is_remote = st.checkbox("Remote", value=True)
@@ -238,11 +256,10 @@ elif st.session_state.current_page == "search":
             is_onsite = st.checkbox("On-site", value=True)
         
         st.write("") 
-        # NEW: Custom bold text with the new 3D pill styling
-        trigger_search = st.button("FIND MY PERFECT MATCHES ❯", use_container_width=True)
+        trigger_search = st.button(" FIND MY PERFECT MATCHES ❯ ")
             
     with col_right:
-        st.markdown("### 🎯 Your AI-Optimized Target Roles")
+        st.markdown("<h3 style='color: white;'>🎯 Your AI-Optimized Target Roles</h3>", unsafe_allow_html=True)
         
         if trigger_search and uploaded_file_search:
             with st.spinner("Analyzing profile and generating secure search algorithms..."):
@@ -275,12 +292,15 @@ elif st.session_state.current_page == "search":
                 search_link_2 = f"https://www.linkedin.com/jobs/search/?keywords={job_title_2.replace(' ', '%20')}&location={location.replace(' ', '%20')}{tpr_param}{wt_param}"
                 search_link_3 = f"https://www.linkedin.com/jobs/search/?keywords={job_title_3.replace(' ', '%20')}&location={location.replace(' ', '%20')}{tpr_param}{wt_param}"
                 
-                st.markdown("#### Click to execute live search:")
+                st.markdown("<h4 style='color: white;'>Click to execute live search:</h4>", unsafe_allow_html=True)
                 st.caption("⚠️ *Note: If LinkedIn asks you to log in, just return here and click the button a second time after logging in!*")
                 
-                st.link_button(f"💼 EXECUTE SEARCH: '{job_title_1}' ❯", search_link_1, use_container_width=True)
-                st.link_button(f"📊 EXECUTE SEARCH: '{job_title_2}' ❯", search_link_2, use_container_width=True)
-                st.link_button(f"🚀 EXECUTE SEARCH: '{job_title_3}' ❯", search_link_3, use_container_width=True)
+                st.write("")
+                st.link_button(f" 💼 EXECUTE SEARCH: '{job_title_1}' ❯ ", search_link_1)
+                st.write("")
+                st.link_button(f" 📊 EXECUTE SEARCH: '{job_title_2}' ❯ ", search_link_2)
+                st.write("")
+                st.link_button(f" 🚀 EXECUTE SEARCH: '{job_title_3}' ❯ ", search_link_3)
                 
         elif trigger_search:
             st.warning("Please upload a resume first so we can analyze your profile.")
