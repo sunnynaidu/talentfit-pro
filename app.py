@@ -1,5 +1,6 @@
 import streamlit as st
 from google import genai
+from google.genai import types 
 import re
 import PyPDF2  
 import docx  
@@ -14,7 +15,7 @@ if "current_page" not in st.session_state:
 # --- 2. Custom Styling ---
 st.markdown("""
 <style>
-    /* Your Custom Deep Blue Radial Gradient Background */
+    /* Deep Blue Radial Gradient Background */
     .stApp {
         background: #020024 !important;
         background: radial-gradient(circle, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 21%, rgba(0, 212, 255, 1) 100%) !important;
@@ -45,7 +46,7 @@ st.markdown("""
         color: black !important;
     }
     
-    /* Forces the "Drag and drop file here" text inside the uploader to be bold */
+    /* Forces text inside the uploader to be bold and black */
     [data-testid="stFileUploaderDropzone"] div, [data-testid="stFileUploaderDropzone"] small {
         color: black !important;
         font-weight: bold !important;
@@ -80,7 +81,7 @@ st.markdown("""
         visibility: hidden !important;
     }
     
-    /* NEW: Expanded to target ALL text inside radio buttons and checkboxes */
+    /* Fix for radio buttons and checkboxes to be readable on dark background */
     .stRadio label, .stCheckbox label, .stRadio p, .stCheckbox p {
         color: white !important;
         font-weight: bold !important;
@@ -160,11 +161,18 @@ if st.session_state.current_page == "alignment":
                     client = genai.Client(api_key=api_key)
                     
                     prompt_instructions = f"""
-                    You are an expert Technical Recruiter. Compare the resume to the job description.
+                    You are a strict, analytical Technical Recruiter ATS (Applicant Tracking System). Compare the resume to the job description using a rigid mathematical scoring system.
+                    
+                    SCORING RUBRIC (Total 100%):
+                    1. Hard Skills & Tools (50%): Calculate the exact percentage of required technical skills present.
+                    2. Experience & Seniority (30%): Does the candidate meet the required years of experience and scope?
+                    3. Education & Certifications (20%): Do they hold the required degrees or equivalent experience?
+                    
+                    Calculate the total objective score. Do not inflate the score. Be highly critical.
                     
                     IMPORTANT: You MUST start your response with exactly this format:
                     <SCORE>XX</SCORE>
-                    where XX is just the number representing the match percentage.
+                    where XX is the calculated number.
                     
                     Then provide:
                     1. Missing Keywords: Identify exact keywords, tools, or skills missing.
@@ -175,9 +183,13 @@ if st.session_state.current_page == "alignment":
                     Job Description: {job_description}
                     """
                     
+                    # Locked temperature to 0.0 for strict, mathematical consistency
                     response = client.models.generate_content(
                         model="gemini-2.5-flash",
-                        contents=prompt_instructions
+                        contents=prompt_instructions,
+                        config=types.GenerateContentConfig(
+                            temperature=0.0, 
+                        )
                     )
                     
                     full_text = response.text
@@ -289,6 +301,7 @@ elif st.session_state.current_page == "search":
                 
                 wt_param = f"&f_WT={'%2C'.join(wt_codes)}" if wt_codes else ""
                 
+                # Hardcoded mock roles (Ready to be wired to dynamic AI generation in the future)
                 job_title_1 = "Senior Program Manager"
                 job_title_2 = "Lead Data Analyst"
                 job_title_3 = "IT Project Director"
